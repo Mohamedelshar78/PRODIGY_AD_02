@@ -56,7 +56,7 @@ class AddTaskViewModel(private val taskRepository: TaskRepository):ViewModel() {
             TimePickerDialog.OnTimeSetListener { _: TimePicker, selectedHour: Int, selectedMinute: Int ->
                 val hourOfDay = if (selectedHour > 12) selectedHour - 12 else selectedHour
                 val amPm = if (selectedHour >= 12) "PM" else "AM"
-                val selectedTime = String.format(Locale.getDefault(), "%02d:%02d ", hourOfDay, selectedMinute, amPm)
+                val selectedTime = String.format(Locale.getDefault(), "%02d:%02d %s", hourOfDay, selectedMinute, amPm)
                 view.text = selectedTime
             }, hour, minute, false)
 

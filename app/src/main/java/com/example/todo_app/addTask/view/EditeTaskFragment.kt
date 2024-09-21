@@ -41,6 +41,7 @@ class EditeTaskFragment : Fragment() {
     private val dates = ArrayList<Date>()
     private val calendarList2 = ArrayList<CalendarDateModel>()
 
+    private lateinit var taskEdite:Tasks
     private lateinit var adapter: CalendarAdapter
     private lateinit var back: ImageView
     private lateinit var calendarNext: ImageView
@@ -168,7 +169,7 @@ class EditeTaskFragment : Fragment() {
         val snapHelper: SnapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(calendarRecyclerView)
 
-        adapter = CalendarAdapter { selectedDate: CalendarDateModel, position: Int ->
+        adapter = CalendarAdapter { selectedDate: CalendarDateModel, _, position: Int ->
             calendarList2.forEachIndexed { index, calendarModel ->
                 calendarModel.isSelected = index == position
             }
@@ -211,38 +212,38 @@ class EditeTaskFragment : Fragment() {
     private fun editeTasks(){
 
         // Define date and time formats
-        val timeFormat = SimpleDateFormat("hh:mm ",Locale.ENGLISH)
-        val startTimeTask = Time(timeFormat.parse(startTime.text.toString()).time)
-        val endTimeTask = Time(timeFormat.parse(endTime.text.toString()).time)
+        val timeFormat = SimpleDateFormat("hh:mm a",Locale.ENGLISH)
+        val startTimeTask = timeFormat.parse(startTime.text.toString())
+        val endTimeTask = timeFormat.parse(endTime.text.toString())
         // Create a Tasks object with the converted date and time
-        val task = Tasks(
-            name = taskName.text.toString(),
-            date = sdf.parse(dateMonth.text.toString()),
-            startTime = startTimeTask,
-            endTime = endTimeTask,
-            priority = priority,
-            description = taskDescription.text.toString()
-        )
 
-        viewModel.editeTask(task)
+        taskEdite.name = taskName.text.toString()
+        taskEdite.date = sdf.parse(dateMonth.text.toString())
+        taskEdite.startTime = startTimeTask
+        taskEdite.endTime = endTimeTask
+        taskEdite. priority = priority
+        taskEdite.description = taskDescription.text.toString()
+
+        viewModel.editeTask(taskEdite)
         Toast.makeText(requireContext(),"Task edited successfully !!",Toast.LENGTH_LONG).show()
     }
 
     private fun getTask(name:String){
         viewModel.getTask(name)
         viewModel.task.observe(viewLifecycleOwner){ task ->
-            setTaskData(task)
+            taskEdite = task
+            setTaskData()
         }
     }
 
-    private fun setTaskData(tasks: Tasks){
-        setPriority(tasks.priority)
-        dateMonth.text = sdf.format(tasks.date)
-        taskName.setText(tasks.name)
-        taskDescription.setText(tasks.description)
-        startTime.text = timeFormat.format(tasks.startTime)
-        endTime.text = timeFormat.format(tasks.endTime)
-        priority = tasks.priority
+    private fun setTaskData(){
+        setPriority(taskEdite.priority)
+        dateMonth.text = sdf.format(taskEdite.date)
+        taskName.setText(taskEdite.name)
+        taskDescription.setText(taskEdite.description)
+        startTime.text = timeFormat.format(taskEdite.startTime)
+        endTime.text = timeFormat.format(taskEdite.endTime)
+        priority = taskEdite.priority
     }
 
     private fun deleteTask(taskName:String){

@@ -17,5 +17,6 @@
         <item name="background">@color/colorSurface</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/white</item>
+        <item name="cardBackgroundColor">#1F1F1F</item>
     </style>
 </resources>

@@ -173,7 +173,7 @@ class AddFragment : Fragment() {
         val snapHelper: SnapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(calendarRecyclerView)
 
-        adapter = CalendarAdapter { selectedDate: CalendarDateModel, position: Int ->
+        adapter = CalendarAdapter { selectedDate: CalendarDateModel, _, position: Int ->
             calendarList2.forEachIndexed { index, calendarModel ->
                 calendarModel.isSelected = index == position
 
@@ -220,8 +220,8 @@ class AddFragment : Fragment() {
         // Define date and time formats
         val timeFormat = SimpleDateFormat("hh:mm a",Locale.ENGLISH)
         // Parse date string to Date object
-        val startTimeTask = Time(timeFormat.parse(startTime.text.toString()).time)
-        val endTimeTask = Time(timeFormat.parse(endTime.text.toString()).time)
+        val startTimeTask = timeFormat.parse(startTime.text.toString())
+        val endTimeTask = timeFormat.parse(endTime.text.toString())
         // Create a Tasks object with the converted date and time
         val task = Tasks(
             name = taskName.text.toString(),

@@ -1,5 +1,6 @@
 package com.example.todo_app.home.view
 
+import TaskAdapter
 import android.icu.util.Calendar
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -35,10 +36,6 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerViewToday:RecyclerView
 
     private lateinit var addTask:FloatingActionButton
-    private lateinit var progressSeeAll:TextView
-    private lateinit var dailySeeAll:TextView
-    private lateinit var tommorowSeeAll:TextView
-
     private lateinit var taskRepository:TaskRepository
 
 
@@ -65,9 +62,6 @@ class HomeFragment : Fragment() {
         numberOfTask = view.findViewById(R.id.numbersOfTasks)
         search = view.findViewById(R.id.search_task)
         addTask = view.findViewById(R.id.addTask)
-        progressSeeAll = view.findViewById(R.id.progress_see_all)
-        dailySeeAll = view.findViewById(R.id.today_see_all)
-        tommorowSeeAll = view.findViewById(R.id.tomorrow_see_all)
         progressBar = view.findViewById(R.id.progressBarTasks)
         recyclerViewTomorow = view.findViewById(R.id.recyclerViewTomorow)
         recyclerViewToday = view.findViewById(R.id.recyclerViewToday)
@@ -80,10 +74,6 @@ class HomeFragment : Fragment() {
         val dateFormat = sdf.format(currentDate.time)
         taskAdapterOthers(dateFormat)
         setTasksToday(dateFormat)
-
-        // value in text view for progress bar
-        progressBarPresentage.text = (progressBar.progress.toString() + "%")
-
     }
 
     private fun onClicked() {
@@ -93,13 +83,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun taskAdapterOthers(dateFormat: String) {
-        viewModel.getAllTasks(sdf.parse(dateFormat.toString()))
-        val taskAdapter = TaskAdapter(findNavController(),taskRepository)
+        viewModel.getAllTasks(sdf.parse(dateFormat))
+        val taskAdapter = TaskAdapter(findNavController(),viewModel,sdf)
         // Observe the LiveData in the ViewModel
         viewModel.tasks.observe(viewLifecycleOwner) { tasks ->
             tasks?.let {
                 taskAdapter.setTasks(it)
-                taskAdapter.notifyDataSetChanged()
             }
         }
         recyclerViewTomorow.apply {
@@ -110,25 +99,29 @@ class HomeFragment : Fragment() {
 
     private fun setTasksToday(dateFormat: String) {
 
-        viewModel.getTasksToday(sdf.parse(dateFormat.toString()))
-        val taskTodayAdapter = TaskAdapter(findNavController(),taskRepository)
+        viewModel.getTasksToday(sdf.parse(dateFormat))
+        val taskTodayAdapter = TaskAdapter(findNavController(),viewModel,sdf)
         viewModel.tasksToday.observe(viewLifecycleOwner) { tasksToday ->
             taskTodayAdapter.setTasks(tasksToday)
-            taskTodayAdapter.notifyDataSetChanged()
 
             val tasksCompleted:Int = tasksToday.filter { it.status }.size
-            titel.text = "You have got ${tasksToday.size} tasks \n today to complete"
+            titel.text = "You have got ${tasksToday.size.minus(tasksCompleted)} tasks \n today to complete"
 
             // Assuming tasksCompleted is an Int variable and taskTodayAdapter.itemCount is also an Int
-            val totalProgress = (tasksCompleted + taskTodayAdapter.itemCount) * 100
-            val progressBarMax = 100 // Maximum progress value
+            var totalProgress = 0
+            if (tasksToday.isNotEmpty())
+                totalProgress = (tasksCompleted.div( tasksToday.size )) * 100
 
             // Calculate the progress as a value between 0 and 100
-            val progress = (totalProgress.toFloat() / progressBarMax).coerceIn(0f, 100f)
-
-            numberOfTask.text = "$tasksCompleted / ${taskTodayAdapter.itemCount}"
+            val progress = totalProgress.toFloat()
+            if (tasksToday.isNotEmpty())
+                 numberOfTask.text = "$tasksCompleted / ${tasksToday.size}"
+            else
+                numberOfTask.text = "0"
             // Set the progress of the ProgressBar
             progressBar.progress = progress.toInt()
+            progressBarPresentage.text = (progressBar.progress.toString() + "%")
+
         }
 
         recyclerViewToday.apply {

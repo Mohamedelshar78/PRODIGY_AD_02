@@ -9,11 +9,11 @@ import java.util.Date
 data class Tasks (
     @PrimaryKey(autoGenerate = true)
  val id: Long = 0,
-    val name: String,
-    val description: String,
-    val date: Date,
-    val startTime: Time,
-    val endTime: Time,
+    var name: String,
+    var description: String,
+    var date: Date,
+    var startTime: Date,
+    var endTime: Date,
     var status: Boolean = false,
-    val priority: String = "Low"
+    var priority: String = "Low"
 )

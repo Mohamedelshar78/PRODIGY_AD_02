@@ -12,7 +12,7 @@ class TaskRepository(private val taskDao: TaskDao) {
        return taskDao.getAllTasks(date)
     }
 
-    fun updateTask(task: Tasks){
+   suspend fun updateTask(task: Tasks){
         taskDao.updateTask(task)
     }
 

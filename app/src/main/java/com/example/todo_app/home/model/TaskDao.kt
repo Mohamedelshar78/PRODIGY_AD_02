@@ -17,7 +17,7 @@ interface TaskDao {
     suspend fun addTask(task: Tasks)
 
     @Update
-    fun updateTask(task: Tasks)
+    suspend fun updateTask(task: Tasks)
 
     @Query("SELECT * FROM tasks WHERE name =:name")
     suspend fun getTask(name:String):Tasks

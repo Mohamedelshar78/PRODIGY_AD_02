@@ -1,5 +1,6 @@
 package com.example.todo_app.addTask.view
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todo_app.R
 import com.example.todo_app.addTask.model.CalendarDateModel
+import android.content.res.Configuration
 
-class CalendarAdapter(private val listener: (calendarDateModel: CalendarDateModel, position: Int) -> Unit) :
+class CalendarAdapter(private val listener: (calendarDateModel: CalendarDateModel, context: Context, position: Int) -> Unit) :
     RecyclerView.Adapter<CalendarAdapter.MyViewHolder>() {
     private val list = ArrayList<CalendarDateModel>()
 
@@ -36,24 +38,21 @@ class CalendarAdapter(private val listener: (calendarDateModel: CalendarDateMode
                 )
 
             } else {
-                calendarDay.setTextColor(
-                    ContextCompat.getColor(
-                        itemView.context,
-                        R.color.black
-                    )
-                )
-                calendarDate.setTextColor(
-                    ContextCompat.getColor(
-                        itemView.context,
-                        R.color.black
-                    )
-                )
+                // Get the appropriate text color based on the current theme
+                val textColor = when (itemView.context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                    Configuration.UI_MODE_NIGHT_YES -> ContextCompat.getColor(itemView.context, R.color.white)
+                    else -> ContextCompat.getColor(itemView.context, R.color.black)
+                }
+
+                // Apply the obtained color to the text views
+                calendarDay.setTextColor(textColor)
+                calendarDate.setTextColor(textColor)
             }
 
             calendarDay.text = calendarDateModel.calendarDay
             calendarDate.text = calendarDateModel.calendarDate
             cardView.setOnClickListener {
-                listener.invoke(calendarDateModel, adapterPosition)
+                listener.invoke(calendarDateModel, itemView.context, adapterPosition)
             }
         }
 

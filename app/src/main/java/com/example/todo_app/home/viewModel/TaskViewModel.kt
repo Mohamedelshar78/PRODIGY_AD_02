@@ -36,5 +36,13 @@ class TaskViewModel(private val taskRepository: TaskRepository):ViewModel() {
         }
     }
 
+    fun updateTasks(tasks: Tasks,date: Date){
+        viewModelScope.launch {
+            taskRepository.updateTask(tasks)
+            val tasksList = taskRepository.getTasksToday(date)
+            _tasksTodayLiveData.value = tasksList
+        }
+    }
+
 
 }
