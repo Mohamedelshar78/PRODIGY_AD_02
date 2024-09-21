@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ToDo_App</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="see_all">See All</string>
+    <string name="progress">Progress</string>
+    <string name="search_task_here">Search Task Here</string>
+    <string name="titel_home">You have got 5 tasks \ntoday to complete</string>
+    <string name="today_task">Today’s Task</string>
+    <string name="tommorrow_task">Tommorrow Task</string>
+    <string name="other_s_task">Other\'s Tasks</string>
+    <string name="today_s_task">Today\'s Tasks</string>
+</resources>
